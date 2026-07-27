@@ -114,7 +114,7 @@ public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
     
     // Проверка 2: Наша новая кастомная команда (Запрос-Ответ)
     // Проверяем первые 4 байта входящего пакета (Класс, Инструкция, P1, P2)
-    else if (cmp_array(VERIFY_APDU, commandApdu, VERIFY_APDU.length) {
+    else if (cmp_array(VERIFY_APDU, commandApdu, VERIFY_APDU.length)) {
         
         Log.i(TAG, "Обнаружена кастомная команда VERIFY!");
         
