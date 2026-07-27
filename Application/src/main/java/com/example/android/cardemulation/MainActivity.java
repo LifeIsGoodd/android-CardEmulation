@@ -48,19 +48,6 @@ public class MainActivity extends SampleActivityBase {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //+++ ВЫВОД ВЕРСИИ ПРИ ЗАПУСКЕ ПРИЛОЖЕНИЯ +++
-        try {
-            String appVersion = this.getPackageManager()
-                .getPackageInfo(this.getPackageName(), 0).versionName;
-            
-            //android.util.Log.i("CardEmulation_GUI", "================================================");
-            android.util.Log.i("CardEmulation_GUI", " ПРИЛОЖЕНИЕ ЗАПУЩЕНО. Версия: " + appVersion);
-            //android.util.Log.i("CardEmulation_GUI", "================================================");
-        } catch (Exception e) {
-            android.util.Log.e("CardEmulation_GUI", "Не удалось получить версию");
-        }
-        //--- ВЫВОД ВЕРСИИ ПРИ ЗАПУСКЕ ПРИЛОЖЕНИЯ ---
-        
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             CardEmulationFragment fragment = new CardEmulationFragment();
@@ -118,6 +105,15 @@ public class MainActivity extends SampleActivityBase {
                 .findFragmentById(R.id.log_fragment);
         msgFilter.setNext(logFragment.getLogView());
 
+        //+++ ВЫВОД ВЕРСИИ ПРИ ЗАПУСКЕ ПРИЛОЖЕНИЯ +++
+        try {
+            String appVersion = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+            android.util.Log.i(TAG, " ПРИЛОЖЕНИЕ ЗАПУЩЕНО. Версия: " + appVersion);
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Не удалось получить версию приложения");
+        }
+        //--- ВЫВОД ВЕРСИИ ПРИ ЗАПУСКЕ ПРИЛОЖЕНИЯ ---
+        
         Log.i(TAG, "Ready");
     }
 }
