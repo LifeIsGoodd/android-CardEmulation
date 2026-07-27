@@ -109,7 +109,7 @@ public class CardService extends HostApduService {
         String account = AccountStorage.GetAccount(this);
         // Защита от нечётности: если строка нечётная, дописываем '0' в самый перед
         if (account.length() % 2 != 0) {
-          account = "0" + account;
+          account = account + "0";
         }  
         // Это в ASCII (1234 -> 31323334)
         //byte[] accountBytes = account.getBytes();  
