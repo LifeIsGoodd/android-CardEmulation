@@ -64,8 +64,8 @@ public class CardEmulationFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             String account = s.toString();
-            //AccountStorage.SetAccount(getActivity(), account);
-    
+            AccountStorage.SetAccount(getActivity(), account);
+            /*
             // Проверяем: если длина строки нечётная
             if (account.length() % 2 != 0) {
               // Выводим красивую системную подсказку об ошибке прямо под полем ввода
@@ -74,7 +74,8 @@ public class CardEmulationFragment extends Fragment {
               // Если всё чётно — убираем ошибку и сохраняем ключ в память
               mAccountField.setError(null); 
               AccountStorage.SetAccount(getActivity(), account);
-            }            
+            }
+            */
         }
     }
 }
