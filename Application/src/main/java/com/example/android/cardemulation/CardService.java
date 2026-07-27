@@ -84,8 +84,8 @@ public class CardService extends HostApduService {
      * at this point.
      */
     // BEGIN_INCLUDE(processCommandApdu)
-    @Override
     /*
+    @Override
     public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
         Log.i(TAG, "Received APDU: " + ByteArrayToHexString(commandApdu));
         // If the APDU matches the SELECT AID command for this service,
@@ -100,22 +100,21 @@ public class CardService extends HostApduService {
         }
     }
     */
-    @Override
-public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
-    Log.i(TAG, "Received APDU: " + ByteArrayToHexString(commandApdu));
+  @Override
+  public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
+      Log.i(TAG, "Received APDU: " + ByteArrayToHexString(commandApdu));
 
-    // Проверка 1: Если пришла стандартная команда SELECT AID (уже была в проекте)
-    if (cmp_array(SELECT_APDU, commandApdu, SELECT_APDU.length)) {
+      // Проверка 1: Если пришла стандартная команда SELECT AID (уже была в проекте)
+      if (cmp_array(SELECT_APDU, commandApdu, SELECT_APDU.length)) {
         String account = AccountStorage.GetAccount(this);
         byte[] accountBytes = account.getBytes();
         Log.i(TAG, "Sending account number: " + account);
         return ConcatArrays(accountBytes, SELECT_OK_SW); // Возвращает данные + 90 00
-    }
+      }
     
-    // Проверка 2: Наша новая кастомная команда (Запрос-Ответ)
-    // Проверяем первые 4 байта входящего пакета (Класс, Инструкция, P1, P2)
-    else if (cmp_array(VERIFY_APDU, commandApdu, VERIFY_APDU.length)) {
-        
+      // Проверка 2: Наша новая кастомная команда (Запрос-Ответ)
+      // Проверяем первые 4 байта входящего пакета (Класс, Инструкция, P1, P2)
+      else if (cmp_array(VERIFY_APDU, commandApdu, VERIFY_APDU.length)) {
         Log.i(TAG, "Обнаружена кастомная команда VERIFY!");
         
         // Извлекаем полезные данные, которые прислал ридер (начиная с 5-го байта)
@@ -152,13 +151,13 @@ public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
         */        
         // --- ТУТ НАША ЛОГИКА ОБРАБОТКИ (ЗАПРОС -> ОТВЕТ) ---
 
-    }
+      }
 
-    // Если ридер прислал любую другую неизвестную команду
-    else {
+      // Если ридер прислал любую другую неизвестную команду
+      else {
         Log.w(TAG, "Неизвестная APDU команда");
         return UNKNOWN_CMD_SW; // Возвращает статус ошибки 0x00 0x00 или 0x6F 0x00
-    }
+      }
 }
 
     // END_INCLUDE(processCommandApdu)
