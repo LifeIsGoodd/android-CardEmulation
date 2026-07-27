@@ -107,7 +107,22 @@ public class CardService extends HostApduService {
       // Проверка 1: Если пришла стандартная команда SELECT AID (уже была в проекте)
       if (cmp_array(SELECT_APDU, commandApdu, SELECT_APDU.length)) {
         String account = AccountStorage.GetAccount(this);
-        byte[] accountBytes = account.getBytes();
+        // Защита от нечётности: если строка нечётная, дописываем '0' в самый перед
+        if (account.length() % 2 != 0) {
+          account = "0" + account;
+        }  
+        // Это в ASCII (1234 -> 31323334)
+        //byte[] accountBytes = account.getBytes();  
+
+        // Это в HEX (1234 -> 1234)
+        // Конвертируем HEX-строку из GUI в массив настоящих бинарных байт
+        int len = account.length();
+        byte[] accountBytes = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+          accountBytes[i / 2] = (byte) ((Character.digit(account.charAt(i), 16) << 4)
+                                + Character.digit(account.charAt(i+1), 16));
+        }          
+          
         Log.i(TAG, "Sending account number: " + account);
         return ConcatArrays(accountBytes, SELECT_OK_SW); // Возвращает данные + 90 00
       }
@@ -255,7 +270,7 @@ public class CardService extends HostApduService {
          // Выводим в лог текущий индекс и сравниваемые байты
          Log.i(logTag, "Индекс [" + i + "]: Шаблон = " + hexFirst + ", Прилетело = " + hexSecond);
            */
-           Log.i("CardService_CMP", "Индекс " + i + ": " + first[i] + " == " + second[i]);
+           //Log.i("CardService_CMP", "Индекс " + i + ": " + first[i] + " == " + second[i]);
            
          if (first[i] != second[i]) {
            return false; // Нашли несовпадение — сразу выходим
