@@ -146,7 +146,7 @@ public class CardService extends HostApduService {
       // Проверка 2: Наша новая кастомная команда (Запрос-Ответ)
       // Проверяем первые 4 байта входящего пакета (Класс, Инструкция, P1, P2)
       else if (cmp_array(VERIFY_APDU, commandApdu, VERIFY_APDU.length)) {
-        Log.i(TAG, "Command VERIFY: " + commandApdu);
+        Log.i(TAG, "Command VERIFY: " + ByteArrayToHexString(commandApdu));
         
         // Извлекаем полезные данные, которые прислал ридер (начиная с 5-го байта)
         // commandApdu[4] - это байт длины данных Lc
@@ -163,7 +163,7 @@ public class CardService extends HostApduService {
         for (int i = 0, j = dataLength - 1; i < dataLength; i++, j--) {
           successPayload[i] = receivedData[j];
         }
-        Log.i(TAG, "Answer VERIFY: " + successPayload);  
+        Log.i(TAG, "Answer VERIFY: " + ByteArrayToHexString(successPayload));  
         return ConcatArrays(successPayload, SELECT_OK_SW);
 
         /*
