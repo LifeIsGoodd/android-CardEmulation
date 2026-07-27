@@ -54,6 +54,20 @@ public class CardService extends HostApduService {
     private static final byte[] VERIFY_APDU = new byte[] {(byte)0x80, (byte)0x20, (byte)0x00, (byte)0x00};
 
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        
+        // Считываем версию напрямую из конфигурации сборки Gradle
+        String appVersion = BuildConfig.VERSION_NAME;
+        
+        // Выводим красивую отметку о старте и версию в лог
+        Log.i(TAG, "================================================");
+        Log.i(TAG, " СЛУЖБА HCE ЗАПУЩЕНА. Версия приложения: " + appVersion);
+        Log.i(TAG, "================================================");
+    }
+
+    
     /**
      * Called if the connection to the NFC card is lost, in order to let the application know the
      * cause for the disconnection (either a lost link, or another AID being selected by the
