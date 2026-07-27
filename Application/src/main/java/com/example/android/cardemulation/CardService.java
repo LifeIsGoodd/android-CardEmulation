@@ -22,6 +22,7 @@ import com.example.android.common.logger.Log;
 
 import java.util.Arrays;
 
+
 /**
  * This is a sample APDU Service which demonstrates how to interface with the card emulation support
  * added in Android 4.4, KitKat.
@@ -50,6 +51,8 @@ public class CardService extends HostApduService {
     // "UNKNOWN" status word sent in response to invalid APDU command (0x0000)
     private static final byte[] UNKNOWN_CMD_SW = HexStringToByteArray("0000");
     private static final byte[] SELECT_APDU = BuildSelectApdu(SAMPLE_LOYALTY_CARD_AID);
+    private static final byte[] VERIFY_APDU = new byte[] {(byte)0x80, (byte)0x20, (byte)0x00, (byte)0x00};
+
 
     /**
      * Called if the connection to the NFC card is lost, in order to let the application know the
@@ -82,6 +85,7 @@ public class CardService extends HostApduService {
      */
     // BEGIN_INCLUDE(processCommandApdu)
     @Override
+    /*
     public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
         Log.i(TAG, "Received APDU: " + ByteArrayToHexString(commandApdu));
         // If the APDU matches the SELECT AID command for this service,
@@ -95,6 +99,68 @@ public class CardService extends HostApduService {
             return UNKNOWN_CMD_SW;
         }
     }
+    */
+    @Override
+public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
+    Log.i(TAG, "Received APDU: " + ByteArrayToHexString(commandApdu));
+
+    // Проверка 1: Если пришла стандартная команда SELECT AID (уже была в проекте)
+    if (cmp_array(SELECT_APDU, commandApdu, SELECT_APDU.length)) {
+        String account = AccountStorage.GetAccount(this);
+        byte[] accountBytes = account.getBytes();
+        Log.i(TAG, "Sending account number: " + account);
+        return ConcatArrays(accountBytes, SELECT_OK_SW); // Возвращает данные + 90 00
+    }
+    
+    // Проверка 2: Наша новая кастомная команда (Запрос-Ответ)
+    // Проверяем первые 4 байта входящего пакета (Класс, Инструкция, P1, P2)
+    else if (cmp_array(VERIFY_APDU, commandApdu, VERIFY_APDU.length) {
+        
+        Log.i(TAG, "Обнаружена кастомная команда VERIFY!");
+        
+        // Извлекаем полезные данные, которые прислал ридер (начиная с 5-го байта)
+        // commandApdu[4] - это байт длины данных Lc
+        int dataLength = commandApdu[4] & 0xFF; // Безопасное приведение byte к int
+        byte[] receivedData = new byte[dataLength];
+        System.arraycopy(commandApdu, 5, receivedData, 0, dataLength);
+        
+        // +++ ТУТ НАША ЛОГИКА ОБРАБОТКИ (ЗАПРОС -> ОТВЕТ) +++
+
+        // Например разворачиваем (реверсируем) полученные данные задом наперед.
+        // Создаем массив нужного размера под ответ (копия длины)
+        byte[] successPayload = new byte[dataLength];
+
+        for (int i = 0, j = dataLength - 1; i < dataLength; i++, j--) {
+          successPayload[i] = receivedData[j];
+        }
+
+        /*
+        // Например, проверим, прислал ли ридер правильный секрет 11 22 33 44
+        byte[] expectedSecret = new byte[] {0x11, 0x22, 0x33, 0x44};
+        
+        if (Arrays.equals(receivedData, expectedSecret)) {
+            Log.i(TAG, "ПИН-код от ридера ВЕРНЫЙ!");
+            // Формируем ответ: например, байт 0x01 (Доступ разрешен) + статус 90 00
+            byte[] successPayload = new byte[] { 0x01 };
+            return ConcatArrays(successPayload, SELECT_OK_SW);
+        } else {
+            Log.i(TAG, "ПИН-код от ридера НЕВЕРНЫЙ!");
+            // Возвращаем байт 0x00 (Отказ) + статус 90 00
+            byte[] failPayload = new byte[] { 0x00 };
+            return ConcatArrays(failPayload, SELECT_OK_SW);
+        }
+        */        
+        // --- ТУТ НАША ЛОГИКА ОБРАБОТКИ (ЗАПРОС -> ОТВЕТ) ---
+
+    }
+
+    // Если ридер прислал любую другую неизвестную команду
+    else {
+        Log.w(TAG, "Неизвестная APDU команда");
+        return UNKNOWN_CMD_SW; // Возвращает статус ошибки 0x00 0x00 или 0x6F 0x00
+    }
+}
+
     // END_INCLUDE(processCommandApdu)
 
     /**
@@ -170,4 +236,23 @@ public class CardService extends HostApduService {
         }
         return result;
     }
+
+    private boolean cmp_array(byte[] first, byte[] second, int len) {
+       // Проверяем, что массивы не null и их длина не меньше требуемой
+       // Если этой проверки в коде не будет, то программа попытается узнать длину у пустого места (null.length). 
+       // В этот момент приложение намертво зависнет, операционная система Android выдаст ошибку «Приложение CardEmulation остановилось», 
+       // а ваш телефон вообще перестанет реагировать на замок до тех пор, пока вы вручную не перезапустите программу.
+       if (first == null || second == null) return false;
+       if (first.length < len) return false;
+       if (second.length < len) return false;
+
+       // Побайтное сравнение до указанной длины
+       for (int i = 0; i < len; i++) {
+          if (first[i] != second[i]) {
+              return false; // Нашли несовпадение — сразу выходим
+          }
+      }
+
+      return true; // Если весь цикл прошел без ошибок, значит массивы равны
+    }    
 }
