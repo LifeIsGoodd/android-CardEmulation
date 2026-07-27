@@ -54,6 +54,7 @@ public class CardService extends HostApduService {
     private static final byte[] VERIFY_APDU = new byte[] {(byte)0x80, (byte)0x20, (byte)0x00, (byte)0x00};
 
 
+    /*
     @Override
     public void onCreate() {
         super.onCreate();
@@ -66,6 +67,7 @@ public class CardService extends HostApduService {
         Log.i(TAG, " СЛУЖБА HCE ЗАПУЩЕНА. Версия приложения: " + appVersion);
         Log.i(TAG, "================================================");
     }
+    */
 
     
     /**
