@@ -236,7 +236,7 @@ public class CardService extends HostApduService {
         return result;
     }
 
-    private boolean cmp_array(byte[] first, byte[] second, int len) {
+     public boolean cmp_array(byte[] first, byte[] second, int len) {
        // Проверяем, что массивы не null и их длина не меньше требуемой
        // Если этой проверки в коде не будет, то программа попытается узнать длину у пустого места (null.length). 
        // В этот момент приложение намертво зависнет, операционная система Android выдаст ошибку «Приложение CardEmulation остановилось», 
