@@ -132,6 +132,7 @@ public class CardService extends HostApduService {
         for (int i = 0, j = dataLength - 1; i < dataLength; i++, j--) {
           successPayload[i] = receivedData[j];
         }
+        return ConcatArrays(successPayload, SELECT_OK_SW);
 
         /*
         // Например, проверим, прислал ли ридер правильный секрет 11 22 33 44
