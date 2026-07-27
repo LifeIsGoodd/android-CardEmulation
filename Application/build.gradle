@@ -40,6 +40,10 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
+
+        // Задайте вашу версию здесь:
+        versionCode 2
+        versionName "2.1-HEX-Safe"        
     }
 
     compileOptions {
