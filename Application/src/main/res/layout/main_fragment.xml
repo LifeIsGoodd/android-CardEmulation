@@ -51,6 +51,17 @@ limitations under the License.
             android:textSize="18dp"
             android:layout_marginTop="40dp"
             />
+         
+         <!-- 
+         Было, только цифры 
+         android:inputType="number"
+         Стало, разрешены буквы A-F и цифры, CapsLock по умолчанию
+         android:inputType="textCapCharacters"
+         android:digits="0123456789ABCDEFabcdef"
+         (В XML-файлах категорически запрещено вставлять комментарии <!-- ... --> внутрь открывающего тега между его атрибутами.
+          Элемент <EditText ... /> — это единый тег. Его атрибуты (android:id, android:inputType и т.д.) должны идти друг за другом без каких-либо посторонних символов. 
+          Как только парсер натыкается на угловую скобку <!--, он считает, что тег <EditText аварийно оборвался, и ломает всю структуру документа.)
+         -->
         <EditText
             android:id="@+id/card_account_field"
             android:width="360dp"
@@ -60,11 +71,8 @@ limitations under the License.
             android:textStyle="bold"
             android:textSize="42dp"
             android:singleLine="true"
-            <!-- Было, только цифры
-             android:inputType="number" />
-             -->
-             <!-- переводит клавиатуру в текстовый режим и принудительно включает Caps Lock. Все буквы, которые вы будете нажимать, автоматически станут заглавными (что идеально для HEX-формата) -->
-             android:inputType="textCapCharacters"
-             android:digits="0123456789ABCDEFabcdef" />
+            android:inputType="textCapCharacters"
+            android:digits="0123456789ABCDEFabcdef" 
+            />
     </LinearLayout>
 </FrameLayout>
