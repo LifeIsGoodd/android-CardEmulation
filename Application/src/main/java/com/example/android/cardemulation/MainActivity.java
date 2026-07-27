@@ -108,9 +108,9 @@ public class MainActivity extends SampleActivityBase {
         //+++ ВЫВОД ВЕРСИИ ПРИ ЗАПУСКЕ ПРИЛОЖЕНИЯ +++
         try {
             String appVersion = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
-            android.util.Log.i(TAG, " ПРИЛОЖЕНИЕ ЗАПУЩЕНО. Версия: " + appVersion);
+            Log.i(TAG, " ПРИЛОЖЕНИЕ ЗАПУЩЕНО. Версия: " + appVersion);
         } catch (Exception e) {
-            android.util.Log.e(TAG, "Не удалось получить версию приложения");
+            Log.e(TAG, "Не удалось получить версию приложения");
         }
         //--- ВЫВОД ВЕРСИИ ПРИ ЗАПУСКЕ ПРИЛОЖЕНИЯ ---
         
