@@ -246,13 +246,23 @@ public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
        if (first.length < len) return false;
        if (second.length < len) return false;
 
+       // Указываем тег, по которому потом можно будет фильтровать логи в Logcat
+       String logTag = "CardService_CMP"; 
+
        // Побайтное сравнение до указанной длины
        for (int i = 0; i < len; i++) {
-          if (first[i] != second[i]) {
-              return false; // Нашли несовпадение — сразу выходим
-          }
+         // Форматируем байты в красивый HEX-вид (например, "0xAB")
+         String hexFirst = String.format("0x%02X", first[i]);
+         String hexSecond = String.format("0x%02X", second[i]);
+         // Выводим в лог текущий индекс и сравниваемые байты
+         Log.i(logTag, "Индекс [" + i + "]: Шаблон = " + hexFirst + ", Прилетело = " + hexSecond);
+           
+         if (first[i] != second[i]) {
+           return false; // Нашли несовпадение — сразу выходим
+         }
       }
 
+      Log.i(logTag, "--> Все " + len + " байт успешно СОВПАЛИ!");
       return true; // Если весь цикл прошел без ошибок, значит массивы равны
     }    
 }
