@@ -122,7 +122,7 @@ public class CardService extends HostApduService {
 
       // Проверка 1: Если пришла стандартная команда SELECT AID (уже была в проекте)
       if (cmp_array(SELECT_APDU, commandApdu, SELECT_APDU.length)) {
-        Log.i(TAG, " Cmd SELECT_APDU " + account);  
+        Log.i(TAG, "  Cmd SELECT_APDU");
         String account = AccountStorage.GetAccount(this);
         // Защита от нечётности: если строка нечётная, дописываем '0' в самый перед
         if (account.length() % 2 != 0) {
