@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build and Sign Android APK
 on:
   workflow_dispatch:
 
@@ -18,11 +18,23 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      # Собираем чистый релизный APK без подписи
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
 
-      - name: Upload APK
+      # Расшифровываем наш секретный ключ безопасности из настроек GitHub
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > app-release-key.jks
+
+      # Официально подписываем APK с помощью встроенного в Android SDK утилиты apksigner
+      - name: Sign APK
+        run: |
+          $ANDROID_HOME/build-tools/29.0.3/apksigner sign --ks app-release-key.jks --ks-pass pass:12345678 --key-pass pass:12345678 --out Application-signed.apk Application/build/outputs/apk/release/Application-release-unsigned.apk
+
+      # Выкладываем готовый подписанный файл, который встанет на телефон без предупреждений
+      - name: Upload Signed APK
         uses: actions/upload-artifact@v4
         with:
-          name: google-hce-card
-          path: Application/build/outputs/apk/debug/Application-debug.apk
+          name: google-hce-card-signed
+          path: Application-signed.apk
